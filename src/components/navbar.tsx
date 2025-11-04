@@ -10,21 +10,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Scale, Info, MessageCircle, Menu } from 'lucide-react'
+import { Scale, Info, MessageCircle, Menu, X } from 'lucide-react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 export function Navbar() {
   const router = useRouter()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleAboutClick = (e: React.MouseEvent) => {
     e.preventDefault()
+    router.push('/about')
   }
 
-  const handleChatAssistantClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    router.push('/auth/login')
-  }
+ 
 
   return (
     <motion.nav
@@ -59,30 +59,33 @@ export function Navbar() {
               <Info className="mr-2 h-4 w-4" />
               About
             </Button>
-            <Button
-              variant="ghost"
-              onClick={handleChatAssistantClick}
-              className="cursor-pointer text-sm font-medium hover:text-primary"
-            >
-              <MessageCircle className="mr-2 h-4 w-4" />
-              Chat Assistant
-            </Button>
+            <Link href="/">
+              <Button
+                variant="ghost"
+                className="cursor-pointer text-sm font-medium hover:text-primary"
+              >
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Chat Assistant
+              </Button>
+            </Link>
           </div>
           <ThemeToggle />
           {/* Mobile dropdown menu */}
           <div className="md:hidden">
-            <DropdownMenu>
+            <DropdownMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-10 w-10 p-0">
-                  <Menu className="h-5 w-5" />
+                <Button variant="ghost" className="h-10 w-10 p-0" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}>
+                  {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48" align="end">
                 <DropdownMenuItem onClick={handleAboutClick} className="cursor-pointer">
                   <Info className="mr-2 h-4 w-4" />About
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleChatAssistantClick} className="cursor-pointer">
-                  <MessageCircle className="mr-2 h-4 w-4" />Chat Assistant
+                <DropdownMenuItem asChild>
+                  <Link href="/" className="cursor-pointer">
+                    <MessageCircle className="mr-2 h-4 w-4" />Chat Assistant
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>

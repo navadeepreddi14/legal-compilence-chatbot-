@@ -12,7 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useCallback } from 'react'
-import { User, LogOut, Scale, MessageCircle, Info, Menu, Bell } from 'lucide-react'
+import { User, LogOut, Scale, MessageCircle, Info, Menu, Bell, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export function UserNavbar() {
@@ -20,6 +20,7 @@ export function UserNavbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState<{ id: string; name: string; email: string; role: string } | null>(null)
   const [notificationCount, setNotificationCount] = useState(0)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -102,7 +103,8 @@ export function UserNavbar() {
   }, [isLoggedIn, user, fetchNotificationCount])
   
   const handleProfileClick = () => router.push('/user/profile')
-  const handleChatAssistantClick = () => router.push('/user/chatbot')
+  // Demo route for unauthenticated users
+  const handleDemoChatClick = () => router.push('/demo/chatbot')
   const handleAboutClick = () => router.push('/user/about')
   const getInitial = (name: string) => (
     name && name.length > 0 ? name.charAt(0).toUpperCase() : '?'
@@ -138,7 +140,7 @@ export function UserNavbar() {
             <Button variant="ghost" onClick={() => router.push('/user/contact')} className="cursor-pointer text-sm font-medium hover:text-primary">
               <MessageCircle className="mr-2 h-4 w-4" />Contact
             </Button>
-            <Button variant="ghost" onClick={handleChatAssistantClick} className="cursor-pointer text-sm font-medium hover:text-primary">
+            <Button variant="ghost" onClick={handleDemoChatClick} className="cursor-pointer text-sm font-medium hover:text-primary">
               <MessageCircle className="mr-2 h-4 w-4" />Chat Assistant
             </Button>
             {isLoggedIn && (
@@ -157,16 +159,16 @@ export function UserNavbar() {
           <ThemeToggle />
           {/* Mobile hamburger menu */}
           <div className="md:hidden">
-            <DropdownMenu>
+            <DropdownMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-10 w-10 p-0">
-                  <Menu className="h-5 w-5" />
+                <Button variant="ghost" className="h-10 w-10 p-0" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}>
+                  {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48" align="end">
                 <DropdownMenuItem onClick={handleAboutClick}><Info className="mr-2 h-4 w-4" />About</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push('/user/contact')}>Contact</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleChatAssistantClick}><MessageCircle className="mr-2 h-4 w-4" />Chat Assistant</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/user/contact')}><MessageCircle className="mr-2 h-4 w-4" />Contact</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDemoChatClick}><MessageCircle className="mr-2 h-4 w-4" />Chat Assistant</DropdownMenuItem>
                 {isLoggedIn && (
                   <>
                     <DropdownMenuSeparator />

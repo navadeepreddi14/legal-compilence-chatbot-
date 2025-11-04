@@ -361,9 +361,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             </div>
                 {message.sender === "bot" && !isBotTyping && (
               <div className="flex items-center gap-2 pt-1 opacity-80 text-[11px] text-gray-900/80 dark:text-white">
-                <span>
-                  This response is AI-generated, not legal advice.
-                </span>
+                
                 {!readOnly && (
                   <button
                     onClick={handleCopy}

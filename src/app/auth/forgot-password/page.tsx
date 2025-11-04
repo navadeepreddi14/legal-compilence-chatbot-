@@ -115,7 +115,7 @@ function ForgotPasswordForm() {
         setError(data.message || "Email verification failed")
         setEmailStatusMessage(data.message || "Email verification failed")
         setEmailStatusType("error")
-        showMessage(data.message || "Email verification failed", "error")
+        // Show inline error only to avoid duplicate messages (toast + inline)
       }
     } catch {
       setError("An error occurred. Please try again.")
@@ -337,11 +337,12 @@ function ForgotPasswordForm() {
                 value={otp.charAt(i) || ''}
                 onChange={(e) => handleOtpChangeAt(i, e.target.value)}
                 onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                className="w-12 h-12 text-center border rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-12 h-12 text-center border rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-primary bg-primary/50 dark:bg-primary/50 text-foreground border-border"
                 inputMode="numeric"
                 pattern="[0-9]*"
                 maxLength={1}
                 aria-label={`OTP digit ${i + 1}`}
+                title={`Enter OTP digit ${i + 1}`}
               />
             ))}
           </div>

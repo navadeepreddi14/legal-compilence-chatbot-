@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import React, { useState } from "react"
@@ -28,6 +29,7 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@/components/ui/dialog"
+import { motion } from "framer-motion"
 
 type Member = {
   name: string
@@ -52,7 +54,7 @@ const defaultTeam: Member[] = [
   {
     name: "Mohan Sunkara",
     role: "Backend & Frontend Developer",
-    imageUrl: "/profilepic/mohan1.jpg",
+    imageUrl: "/profilepic/mohan.jpg",
     linkedin: "https://www.linkedin.com/in/mohan-sunkara",
     email: "mohansunkara963@gmail.com",
     github: "https://github.com/Mohanchowdary1223",
@@ -70,7 +72,7 @@ const defaultTeam: Member[] = [
   {
     name: "KrishnaVeni Polnati",
     role: "Frontend Developer",
-    imageUrl: "/profilepic/krishnaVeni1.jpg",
+    imageUrl: "/profilepic/krishnaveni.jpg",
     linkedin: "https://www.linkedin.com/in/krishna-veni-polnati-0ba462299?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
     email: "support2@example.com",
     github: "https://share.google/Fv1z9jicLP2LWE5qD",
@@ -95,7 +97,7 @@ export const TeamGrid: React.FC<{ members?: Member[]; compact?: boolean }> = ({
   const [resumeSrc, setResumeSrc] = useState<string | null>(null)
   const [loadingResume, setLoadingResume] = useState(false)
 
-  const cols = compact ? 2 : 3;
+  const cols = compact ? 2 : 3
 
   return (
     <TooltipProvider>
@@ -113,23 +115,25 @@ export const TeamGrid: React.FC<{ members?: Member[]; compact?: boolean }> = ({
             }`}
           >
             {members.map((m, i) => {
-              const isLast = i === members.length - 1;
-              // Center the last card if last row not full
-              let extraClasses = "";
+              const isLast = i === members.length - 1
+              let extraClasses = ""
               if (
                 members.length > cols &&
                 isLast &&
                 members.length % cols !== 0
               ) {
-                extraClasses = "col-span-full";
+                extraClasses = "col-span-full"
               }
               return (
-                <article
+                <motion.article
                   key={m.email || m.name}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: i * 0.07, ease: "easeOut" }}
+                  viewport={{ once: true }}
                   className={`bg-card/80 backdrop-blur rounded-2xl border border-border shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center p-6 ${extraClasses}`}
-                >
-                  {/* Avatar always on top, big and square, no distortion */}
-                  <Avatar className="w-[250px] h-[200px] mb-5 rounded-xl overflow-hidden border shadow-sm bg-muted">
+                  >
+                    <Avatar className="w-[250px] h-[200px] md:h-[250px] md:w-[300px]  sm:w-[200px] sm:h-[250px] mb-5 rounded-xl overflow-hidden border shadow-sm bg-muted">
                     {m.imageUrl ? (
                       <AvatarImage
                         src={m.imageUrl}
@@ -147,12 +151,8 @@ export const TeamGrid: React.FC<{ members?: Member[]; compact?: boolean }> = ({
                     )}
                   </Avatar>
 
-                  <h3 className="text-xl font-bold text-foreground mb-1">
-                    {m.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {m.role}
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-1">{m.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{m.role}</p>
                   <div className="flex flex-wrap justify-center gap-5 text-muted-foreground mb-3">
                     {m.email && (
                       <Tooltip>
@@ -221,24 +221,23 @@ export const TeamGrid: React.FC<{ members?: Member[]; compact?: boolean }> = ({
                         <TooltipTrigger asChild>
                           <button
                             onClick={async () => {
-                              const url = m.resume || null;
-                              setResumeUrl(url);
-                              setResumeName(m.name);
-                              if (!url) return;
+                              const url = m.resume || null
+                              setResumeUrl(url)
+                              setResumeName(m.name)
+                              if (!url) return
                               if (url.startsWith('/')) {
-                                setResumeSrc(url);
-                                setResumeOpen(true);
-                                return;
+                                setResumeSrc(url)
+                                setResumeOpen(true)
+                                return
                               }
                               try {
-                                setLoadingResume(true);
-                                setResumeOpen(true);
-                                // If using API to fetch remote base64: see your previous logic.
-                                setResumeSrc(url);
+                                setLoadingResume(true)
+                                setResumeOpen(true)
+                                setResumeSrc(url)
                               } catch (e) {
-                                setResumeSrc(url);
+                                setResumeSrc(url)
                               } finally {
-                                setLoadingResume(false);
+                                setLoadingResume(false)
                               }
                             }}
                             className="flex items-center hover:text-primary transition-colors"
@@ -312,8 +311,8 @@ export const TeamGrid: React.FC<{ members?: Member[]; compact?: boolean }> = ({
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                </article>
-              );
+                </motion.article>
+              )
             })}
           </div>
         </div>

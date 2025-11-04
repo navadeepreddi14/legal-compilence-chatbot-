@@ -12,11 +12,13 @@ interface ChatInputProps {
   dragActive: boolean   // "global" drag state from page
   locked?: boolean      // <--- disables all input/UI while bot typing
   uploadedFile: { id?: string; file?: File; name: string } | null
+  placeholder?: string
   onInputChange: (value: string) => void
   onSendMessage: () => void
   onFileUpload: (file: File) => void
   onRemoveFile: () => void
   onSuccess?: (message: string, type?: 'success' | 'error') => void;
+  onUploadClick?: () => boolean | void
 }
 
 
@@ -31,6 +33,8 @@ export const ChatInput = forwardRef<any, ChatInputProps>(({
   onFileUpload,
   onRemoveFile,
   onSuccess,
+  placeholder,
+  onUploadClick,
 }, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -201,7 +205,7 @@ export const ChatInput = forwardRef<any, ChatInputProps>(({
           <div className="relative flex items-center">
             <Textarea
               ref={textareaRef}
-placeholder="Ask your legal compliance questions..."
+              placeholder={placeholder ?? "Ask your legal compliance questions..."}
               value={inputMessage}
               onChange={handleInputChange}
               onPaste={handlePaste}
@@ -218,7 +222,13 @@ placeholder="Ask your legal compliance questions..."
               variant="ghost"
               className="absolute right-1.5 bottom-1.5 h-8 w-8 p-0 flex-shrink-0 transition-all hover:bg-secondary rounded-md"
               title="Upload file"
-              onClick={() => setModalOpen(true)}
+              onClick={() => {
+                if (onUploadClick) {
+                  const res = onUploadClick()
+                  if (res === false) return
+                }
+                setModalOpen(true)
+              }}
               disabled={loading || locked}
             >
               <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground hover:text-foreground transition-colors" />

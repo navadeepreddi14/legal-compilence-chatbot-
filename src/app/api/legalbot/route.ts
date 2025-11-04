@@ -57,7 +57,9 @@ export async function POST(request: NextRequest) {
     const userId = request.headers.get('x-user-id')
     const userName = request.headers.get('x-user-name') || ''
     const body = await request.json()
-    if (!userId) {
+    // Demo mode: allow requests without userId when demo flag present
+    const isDemo = request.headers.get('x-demo') === '1' || (body && body.demo === true)
+    if (!userId && !isDemo) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 })
     }
     const API_KEY = process.env.API_KEY
@@ -71,7 +73,7 @@ export async function POST(request: NextRequest) {
     const chatId = body.chatId
     const title = body.title || 'Legal Query'
     let messages = []
-    if (chatId) {
+    if (chatId && !isDemo) {
       chat = await db.collection('chats').findOne({ _id: new ObjectId(chatId), userId })
       if (!chat) {
         return NextResponse.json({ error: 'Chat not found' }, { status: 404 })
@@ -128,26 +130,32 @@ export async function POST(request: NextRequest) {
         }
         messages.push(replyMsg)
 
-        // Save the chat and return early
-        let result
-        if (chatId) {
-          await db.collection('chats').updateOne(
-            { _id: new ObjectId(chatId), userId },
-            { $set: { messages, title, updatedAt: new Date(), userId, userName } }
-          )
-          chat = await db.collection('chats').findOne({ _id: new ObjectId(chatId), userId })
+        // Save the chat and return early unless this is demo mode (no persistence)
+        if (!isDemo) {
+          let result
+          if (chatId) {
+            await db.collection('chats').updateOne(
+              { _id: new ObjectId(chatId), userId },
+              { $set: { messages, title, updatedAt: new Date(), userId, userName } }
+            )
+            chat = await db.collection('chats').findOne({ _id: new ObjectId(chatId), userId })
+          } else {
+            result = await db.collection('chats').insertOne({
+              userId,
+              userName,
+              title,
+              messages,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            })
+            chat = await db.collection('chats').findOne({ _id: result.insertedId })
+          }
+          return NextResponse.json({ chat })
         } else {
-          result = await db.collection('chats').insertOne({
-            userId,
-            userName,
-            title,
-            messages,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          })
-          chat = await db.collection('chats').findOne({ _id: result.insertedId })
+          // Demo mode: return chat-like structure without persisting
+          const demoChat = { title, messages }
+          return NextResponse.json({ chat: demoChat })
         }
-        return NextResponse.json({ chat })
       }
 
       const legalKeywords = [
@@ -204,7 +212,7 @@ export async function POST(request: NextRequest) {
     // If there's a file, it has already been validated during upload
     // No need to re-validate here
 
-    messages.push(userMsg)
+  messages.push(userMsg)
 
     // If this is just a file upload message, don't generate a bot response
     if (body.isFileUpload) {
@@ -413,9 +421,9 @@ Remember: You are NOT a replacement for professional legal counsel. Always recom
     }
     messages.push(botMsg)
 
-    // If we have temporary file data and bot response was successful, store the file now
+    // If we have temporary file data and bot response was successful, store the file now (skip in demo)
     let fileId = undefined
-    if (userMsg.tempFileData && !userMsg.tempFileData.rejected && botText && botText !== 'Sorry, I could not get a response.') {
+    if (!isDemo && userMsg.tempFileData && !userMsg.tempFileData.rejected && botText && botText !== 'Sorry, I could not get a response.') {
       try {
         const fileDoc = {
           originalName: userMsg.tempFileData.originalName,
@@ -444,26 +452,30 @@ Remember: You are NOT a replacement for professional legal counsel. Always recom
       console.log('File was rejected, not storing in database')
     }
 
-    // Save chat, always store userId and userName
-    let result
-    if (chatId) {
-      await db.collection('chats').updateOne(
-        { _id: new ObjectId(chatId), userId },
-        { $set: { messages, title, updatedAt: new Date(), userId, userName } }
-      )
-      chat = await db.collection('chats').findOne({ _id: new ObjectId(chatId), userId })
-    } else {
-      result = await db.collection('chats').insertOne({
-        userId,
-        userName,
-        title,
-        messages,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-      chat = await db.collection('chats').findOne({ _id: result.insertedId })
+    // Save chat unless demo mode; return chat-like object
+    if (!isDemo) {
+      let result
+      if (chatId) {
+        await db.collection('chats').updateOne(
+          { _id: new ObjectId(chatId), userId },
+          { $set: { messages, title, updatedAt: new Date(), userId, userName } }
+        )
+        chat = await db.collection('chats').findOne({ _id: new ObjectId(chatId), userId })
+      } else {
+        result = await db.collection('chats').insertOne({
+          userId,
+          userName,
+          title,
+          messages,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        chat = await db.collection('chats').findOne({ _id: result.insertedId })
+      }
+      return NextResponse.json({ chat })
     }
-    return NextResponse.json({ chat })
+    const demoChat = { title, messages }
+    return NextResponse.json({ chat: demoChat })
   } catch {
     return NextResponse.json({ error: 'Failed to process message' }, { status: 500 })
   }

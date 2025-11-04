@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog'
@@ -16,7 +16,7 @@ const BlockedPage = () => {
   const [pendingDeactivate, setPendingDeactivate] = useState<UserItem | null>(null)
   const { show: showSuccessMessage, message: successMessage, type: messageType, showMessage, hideMessage } = useSuccessMessage()
 
-  const fetchBlockedUsers = async () => {
+  const fetchBlockedUsers = useCallback(async () => {
     const token = localStorage.getItem('token')
     if (!token) return
     setLoading(true)
@@ -29,9 +29,9 @@ const BlockedPage = () => {
       showMessage('Failed to fetch blocked users', 'error')
     }
     setLoading(false)
-  }
+  }, [showMessage])
 
-  useEffect(() => { fetchBlockedUsers() }, [])
+  useEffect(() => { fetchBlockedUsers() }, [fetchBlockedUsers])
 
   const doAction = async (userId: string, action: 'unblock' | 'deactivate') => {
     const token = localStorage.getItem('token')

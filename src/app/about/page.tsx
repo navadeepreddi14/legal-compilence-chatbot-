@@ -1,15 +1,18 @@
 'use client'
 
+import { Navbar } from '@/components/navbar'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { motion } from 'framer-motion'
-import { 
-  Scale, 
-  Shield, 
-  FileText, 
-  Clock, 
-  Users, 
-  TrendingUp, 
-  CheckCircle, 
+import {
+  Scale,
+  Shield,
+  FileText,
+  Clock,
+  Users,
+  TrendingUp,
+  CheckCircle,
   AlertTriangle,
   Zap,
   Globe,
@@ -36,7 +39,6 @@ export default function HomePage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // motion variants for checklist items
   const checklistChild = {
     hidden: { opacity: 0, y: 8 },
     visible: { opacity: 1, y: 0 },
@@ -48,8 +50,8 @@ export default function HomePage() {
 
   return (
     <>
-     
-      
+      <Navbar />
+
       {/* Hero Section - Full Height */}
       <div className="h-screen flex items-center justify-center">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -69,8 +71,8 @@ export default function HomePage() {
               <Scale className="h-16 w-16 text-primary" />
               <FileText className="h-12 w-12 text-primary" />
             </motion.div>
-            
-            <motion.h1 
+
+            <motion.h1
               className="text-4xl md:text-6xl font-bold mb-6"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -78,8 +80,8 @@ export default function HomePage() {
             >
               Legal Compliance <span className="text-primary">Chatbot for Startups</span>
             </motion.h1>
-            
-            <motion.p 
+
+            <motion.p
               className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -88,13 +90,17 @@ export default function HomePage() {
               AI-powered legal compliance assistance for startups. Get instant answers to your legal questions
               and ensure your business stays compliant with regulations, contracts, and legal requirements.
             </motion.p>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.8 }}
             >
-            
+              <Link href="/auth/login">
+                <Button size="lg" className="text-lg px-8 py-4 cursor-pointer">
+                  Get Started
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
@@ -103,7 +109,7 @@ export default function HomePage() {
       {/* Content that appears on scroll */}
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Features Grid - 2 cards per row */}
-        <motion.div 
+        <motion.div
           className="grid md:grid-cols-2 gap-8 py-20"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -128,8 +134,8 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Our AI chatbot provides comprehensive legal guidance tailored specifically for startups. 
-                  Ask about incorporation, business structures, compliance requirements, and get detailed 
+                  Our AI chatbot provides comprehensive legal guidance tailored specifically for startups.
+                  Ask about incorporation, business structures, compliance requirements, and get detailed
                   explanations backed by current legal standards.
                 </p>
               </CardContent>
@@ -154,7 +160,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Monitor regulatory changes and receive alerts about compliance requirements relevant to your business. 
+                  Monitor regulatory changes and receive alerts about compliance requirements relevant to your business.
                   Track employment laws, data protection requirements, tax obligations, and industry-specific regulations.
                 </p>
               </CardContent>
@@ -179,7 +185,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Upload and analyze contracts, policies, terms of service, and other legal documents to identify 
+                  Upload and analyze contracts, policies, terms of service, and other legal documents to identify
                   potential compliance issues, missing clauses, and areas that need legal attention.
                 </p>
               </CardContent>
@@ -204,7 +210,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Access legal compliance guidance anytime, day or night. No need to wait for business hours 
+                  Access legal compliance guidance anytime, day or night. No need to wait for business hours
                   or schedule expensive lawyer consultations for basic compliance questions.
                 </p>
               </CardContent>
@@ -213,7 +219,7 @@ export default function HomePage() {
         </motion.div>
 
         {/* Why It's Useful Section - Fixed dark mode styling */}
-        <motion.section 
+        <motion.section
           className="py-20"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -233,12 +239,7 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <motion.div className="grid md:grid-cols-2 gap-8 mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.08 }}
-          >
+          <div className="grid md:grid-cols-2 gap-8 mb-16">
             <div>
               <Card className="h-full border-destructive/20 bg-destructive/5">
                 <CardHeader>
@@ -256,23 +257,23 @@ export default function HomePage() {
                     className="space-y-3"
                   >
                     <motion.div variants={checklistChild} className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-destructive rounded-full" />
+                      <div className="w-2 h-2 bg-destructive rounded-full"></div>
                       <span className="text-sm">Improper business structure selection</span>
                     </motion.div>
                     <motion.div variants={checklistChild} className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-destructive rounded-full" />
+                      <div className="w-2 h-2 bg-destructive rounded-full"></div>
                       <span className="text-sm">Missing employment law compliance</span>
                     </motion.div>
                     <motion.div variants={checklistChild} className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-destructive rounded-full" />
+                      <div className="w-2 h-2 bg-destructive rounded-full"></div>
                       <span className="text-sm">Inadequate intellectual property protection</span>
                     </motion.div>
                     <motion.div variants={checklistChild} className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-destructive rounded-full" />
+                      <div className="w-2 h-2 bg-destructive rounded-full"></div>
                       <span className="text-sm">Non-compliance with data protection laws</span>
                     </motion.div>
                     <motion.div variants={checklistChild} className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-destructive rounded-full" />
+                      <div className="w-2 h-2 bg-destructive rounded-full"></div>
                       <span className="text-sm">Poorly drafted contracts and agreements</span>
                     </motion.div>
                   </motion.div>
@@ -320,11 +321,11 @@ export default function HomePage() {
                 </CardContent>
               </Card>
             </div>
-          </motion.div>
+          </div>
         </motion.section>
 
         {/* Statistics Section */}
-        <motion.section 
+        <motion.section
           className="py-20"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -377,40 +378,51 @@ export default function HomePage() {
         </motion.section>
 
         {/* Call to Action */}
-        <motion.section 
+        <motion.section
           className="py-20 text-center"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          
+          <Card className="p-8 bg-primary/5 border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-2xl md:text-3xl mb-4">Ready to Ensure Legal Compliance?</CardTitle>
+              <CardDescription className="text-lg mb-6">
+                Join thousands of startups using our AI-powered legal compliance chatbot to stay protected and compliant.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/auth/login">
+                <Button
+                  size="lg"
+                  className="
+    text-sm sm:text-base md:text-lg 
+    px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4
+    min-h-[48px] sm:min-h-[52px]
+    w-full sm:w-auto
+    max-w-[280px] sm:max-w-none
+    whitespace-normal
+    leading-tight
+    text-center
+    cursor-pointer
+  "
+                >
+                  Start Your Free Legal Consultation
+                </Button>
+
+
+              </Link>
+            </CardContent>
+          </Card>
         </motion.section>
 
-  {/* Team Section */}
-  <motion.section
-    className="py-12"
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.7, delay: 0.05 }}
-  >
-    <div className="container mx-auto max-w-5xl px-4">
-      <motion.h2 className="text-2xl font-semibold text-center mb-6"
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        Our Team
-      </motion.h2>
-      <TeamGrid compact />
-    </div>
-  </motion.section>
+        {/* Team Section (compact for landing) */}
+        <TeamGrid compact />
       </div>
 
       {/* Footer */}
-      <motion.footer 
+      <motion.footer
         className="bg-muted"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -484,7 +496,7 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          <motion.div 
+          <motion.div
             className="border-t border-muted-foreground/20 mt-12 pt-8 text-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
